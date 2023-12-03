@@ -1,11 +1,18 @@
 import { Channel, Connection, connect } from "amqplib";
+import { config } from "dotenv";
 import { Hono } from "hono";
-
+import { QueueMsg } from "./types";
+import checkout from "./utils/checkout";
+config();
 const app = new Hono();
+const { RABBITMQ_URL } = process.env;
 
 (async () => {
   const queue = "mpesa";
-  const connection: Connection = await connect("amqp://localhost");
+
+  const connection: Connection = await connect(
+    RABBITMQ_URL ?? "localhost:5672"
+  );
 
   const mpesaChannel: Channel = await connection.createChannel();
   await mpesaChannel.assertQueue(queue);
@@ -13,7 +20,15 @@ const app = new Hono();
   // Listener
   mpesaChannel.consume(queue, (msg) => {
     if (msg !== null) {
-      console.log("Recieved:", msg.content.toString());
+      console.log("Recieved:", msg.content.toString("utf8"));
+      try {
+        let queueMsg = msg.content.toString();
+        console.log({ queueMsg });
+
+        checkout(queueMsg);
+      } catch (error) {
+        console.log(`Error while consuming the queue message: ${error};`);
+      }
       mpesaChannel.ack(msg);
     } else {
       console.log("Consumer cancelled by server");

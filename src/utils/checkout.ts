@@ -1,25 +1,40 @@
+import { config } from "dotenv";
+import { QueueMsg } from "../types";
 const IntaSend = require("intasend-node");
 
+config();
+
+const { INTASEND_API_TOKEN, INTASEND_PUBLISHABLE_KEY } = process.env;
+
 let intasend = new IntaSend(
-  "<INTASEND_PUBLISHABLE_KEY>",
-  "<INTASEND_SECRET_KEY>",
+  INTASEND_PUBLISHABLE_KEY,
+  INTASEND_API_TOKEN,
   true // set to false when going live
 );
 
 let collection = intasend.collection();
+console.log(collection);
 
-// How to trigger STK Push
-collection
-  .mpesaStkPush({
-    phone_number: '25472xxxxxxx',
-    name: 'John Doe',
-    email: 'test@intasend.com',
-    amount: 10,
-    api_ref: 'test',
-  })
-  .then((resp: any) => {
-    console.log(`Resp: ${JSON.stringify(resp)}`);
-  })
-  .catch((err: any) => {
-    console.error(`error: ${err}`);
-  });
+//Trigger STK Push
+async function checkout(data: any) {
+  // const { phone_number } = data;
+  // console.log({ phone_number });
+  console.log({ data });
+
+  collection
+    .mpesaStkPush({
+      name: data.name,
+      email: data.email,
+      amount: data.amount,
+      api_ref: data.api_ref,
+      phone_number: data.phone_number,
+    })
+    .then((resp: any) => {
+      console.log(`Resp: ${JSON.stringify(resp)}`);
+    })
+    .catch((err: any) => {
+      console.error(`error: ${err}`);
+    });
+}
+
+export default checkout;

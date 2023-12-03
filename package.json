@@ -1,7 +1,14 @@
 {
+  "name": "mpesa-service",
+  "version": "1.0.0",
+  "description": "A mpesa microservice built on Hono(Bun)",
+  "main": "index.ts",
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot --watch src/index.ts"
   },
+  "keywords": [],
+  "author": "MikeTeddyOmondi",
+  "license": "MIT",
   "dependencies": {
     "@types/amqplib": "^0.10.4",
     "amqplib": "^0.10.3",
