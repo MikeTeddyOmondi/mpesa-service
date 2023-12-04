@@ -12,11 +12,11 @@ run-container:
 
 # Docker compose
 run-compose:
-  docker compose up -d 
+  docker compose -f checkout-service.yml  up -d 
 
 # Docker compose down
 run-compose-down:
-  docker compose down 
+  docker compose -f checkout-service.yml  down 
 
 # Start RabbitMQ 
 start_rabbitmq:

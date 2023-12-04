@@ -1,20 +1,20 @@
-import { Channel, Connection, connect } from "amqplib";
+import { connect } from "amqplib";
 import { config } from "dotenv";
 import { Hono } from "hono";
-import { QueueMsg } from "./types";
-import checkout from "./utils/checkout";
+// import { QueueMsg } from "./types.js";
+import checkout from "./utils/checkout.js";
+
 config();
+
 const app = new Hono();
 const { RABBITMQ_URL } = process.env;
 
 (async () => {
   const queue = "mpesa";
 
-  const connection: Connection = await connect(
-    RABBITMQ_URL ?? "localhost:5672"
-  );
+  const connection = await connect(RABBITMQ_URL ?? "localhost:5672");
 
-  const mpesaChannel: Channel = await connection.createChannel();
+  const mpesaChannel = await connection.createChannel();
   await mpesaChannel.assertQueue(queue);
 
   // Listener
